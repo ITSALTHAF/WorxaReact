@@ -1,4 +1,4 @@
-package com.workerapp
+package com.workermobileapp
 
 import android.app.Application
 import com.facebook.react.PackageList

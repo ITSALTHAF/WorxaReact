@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, ScrollView } from 'react-native';
 import { styles } from './ApplyJobScreen.styles';
 
 const ApplyJobScreen = ({ navigation, route }) => {
@@ -8,17 +9,36 @@ const ApplyJobScreen = ({ navigation, route }) => {
   const [proposedPrice, setProposedPrice] = useState('');
   const [coverMessage, setCoverMessage] = useState('');
   const [availability, setAvailability] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    if (!proposedPrice.trim() || isNaN(proposedPrice)) {
+      Alert.alert('Validation Error', 'Please enter a valid proposed price.');
+      return false;
+    }
+    if (!coverMessage.trim()) {
+      Alert.alert('Validation Error', 'Please write a cover message.');
+      return false;
+    }
+    if (!availability.trim()) {
+      Alert.alert('Validation Error', 'Please specify your availability.');
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = () => {
-    if (!proposedPrice || !coverMessage || !availability) {
-      Alert.alert('Error', 'Please fill all fields');
-      return;
-    }
+    if (!validateForm()) return;
 
-    // Simulate submission success
-    Alert.alert('Application Submitted', 'Your application has been sent to the client.', [
-      { text: 'OK', onPress: () => navigation.goBack() },
-    ]);
+    setLoading(true);
+
+    // Simulate API call delay
+    setTimeout(() => {
+      setLoading(false);
+      Alert.alert('Application Submitted', 'Your application has been sent to the client.', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    }, 2000);
   };
 
   return (
@@ -34,6 +54,7 @@ const ApplyJobScreen = ({ navigation, route }) => {
           keyboardType="numeric"
           value={proposedPrice}
           onChangeText={setProposedPrice}
+          editable={!loading}
         />
 
         <Text style={styles.label}>Cover Message</Text>
@@ -45,6 +66,7 @@ const ApplyJobScreen = ({ navigation, route }) => {
           numberOfLines={4}
           value={coverMessage}
           onChangeText={setCoverMessage}
+          editable={!loading}
         />
 
         <Text style={styles.label}>Availability</Text>
@@ -54,10 +76,15 @@ const ApplyJobScreen = ({ navigation, route }) => {
           placeholderTextColor="#888"
           value={availability}
           onChangeText={setAvailability}
+          editable={!loading}
         />
 
-        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-          <Text style={styles.submitBtnText}>Submit Application</Text>
+        <TouchableOpacity
+          style={[styles.submitBtn, loading && styles.submitBtnDisabled]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? <ActivityIndicator color="white" /> : <Text style={styles.submitBtnText}>Submit Application</Text>}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

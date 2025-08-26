@@ -13,13 +13,13 @@ export const styles = StyleSheet.create({
     color: '#667eea',
     fontWeight: '700',
     fontSize: 24,
-    marginBottom: 6,
+    marginBottom: 10,
   },
   status: {
     color: '#22c55e',
     fontWeight: 'bold',
     fontSize: 18,
-    marginBottom: 12,
+    marginBottom: 15,
   },
   label: {
     color: '#aaa',
@@ -33,15 +33,15 @@ export const styles = StyleSheet.create({
     marginBottom: 4,
   },
   actionBtn: {
-    backgroundColor: '#ef4444',
-    marginTop: 30,
+    backgroundColor: '#667eea',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    marginBottom: 12,
   },
   actionBtnText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontWeight: '700',
     fontSize: 16,
   },
 });

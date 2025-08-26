@@ -49,7 +49,7 @@ const EmailVerificationScreen = ({ navigation, route }) => {
     setTimeout(() => {
       setLoading(false);
       Alert.alert('Success', 'Email verified successfully!', [
-  { text: 'OK', onPress: () => navigation.navigate('Home') }
+  { text: 'OK', onPress: () => navigation.navigate('Main', { screen: 'Home' }) }
 ]);
     }, 2000);
   };

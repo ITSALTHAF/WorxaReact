@@ -1,20 +1,29 @@
 import React from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { styles } from './BookingDetailScreen.styles';
 
-const BookingDetailScreen = ({ route, navigation }) => {
+const BookingDetailScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
   const { booking } = route.params;
 
-  const handleAction = (type) => {
-    if (type === 'Cancel') {
-      Alert.alert('Booking Cancelled', 'The booking has been cancelled.', [
-        { text: 'OK', onPress: () => navigation.goBack() }
-      ]);
-    } else if (type === 'Complete') {
-      Alert.alert('Booking Completed', 'Marked as done.', [
-        { text: 'OK', onPress: () => navigation.goBack() }
-      ]);
-    } // Add more as needed
+  const handleCancel = () => {
+    Alert.alert('Cancel Booking', 'Are you sure you want to cancel this booking?', [
+      { text: 'No', style: 'cancel' },
+      {
+        text: 'Yes',
+        onPress: () => {
+          // Handle cancel booking logic here (e.g., update backend)
+          Alert.alert('Booking cancelled.');
+          navigation.goBack();
+        },
+      },
+    ]);
+  };
+
+  const handleReschedule = () => {
+    navigation.navigate('RescheduleBooking', { booking });
   };
 
   return (
@@ -23,28 +32,18 @@ const BookingDetailScreen = ({ route, navigation }) => {
         <Text style={styles.title}>{booking.jobTitle}</Text>
         <Text style={styles.status}>{booking.status}</Text>
         <Text style={styles.label}>Date:</Text>
-        <Text style={styles.value}>{booking.dateTime}</Text>
+        <Text style={styles.value}>{booking.date}</Text>
         <Text style={styles.label}>With:</Text>
         <Text style={styles.value}>{booking.userName}</Text>
-        {/* Add more booking/job/client info as needed */}
 
-        {/* Actions depending on status */}
-        {booking.status === 'Confirmed' && (
-          <TouchableOpacity
-            style={styles.actionBtn}
-            onPress={() => handleAction('Cancel')}
-          >
+        <View style={{ marginTop: 20 }}>
+          <TouchableOpacity style={styles.actionBtn} onPress={handleReschedule}>
+            <Text style={styles.actionBtnText}>Reschedule Booking</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.actionBtn, { backgroundColor: '#ef4444' }]} onPress={handleCancel}>
             <Text style={styles.actionBtnText}>Cancel Booking</Text>
           </TouchableOpacity>
-        )}
-        {booking.status === 'Pending' && (
-          <TouchableOpacity
-            style={styles.actionBtn}
-            onPress={() => handleAction('Complete')}
-          >
-            <Text style={styles.actionBtnText}>Mark as Completed</Text>
-          </TouchableOpacity>
-        )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

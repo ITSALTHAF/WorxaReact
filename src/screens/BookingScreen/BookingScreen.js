@@ -1,35 +1,37 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { styles } from './BookingScreen.styles';
 
 const MOCK_BOOKINGS = [
   {
     id: '1',
-    jobTitle: 'Fix Kitchen Sink Leak',
+    jobTitle: 'Fix Kitchen Leak',
     userName: 'Maria Santos',
-    dateTime: 'Aug 30, 3:00 PM',
+    date: 'Aug 30, 3:00 PM',
     status: 'Confirmed',
   },
   {
     id: '2',
     jobTitle: 'Install Ceiling Fan',
     userName: 'Robert Chen',
-    dateTime: 'Sep 1, 10:00 AM',
+    date: 'Sep 1, 10:00 AM',
     status: 'Pending',
   },
   {
     id: '3',
-    jobTitle: 'Bathroom Tile Repair',
+    jobTitle: 'Bathroom Repair',
     userName: 'Sarah Johnson',
-    dateTime: 'Aug 25, 9:00 AM',
+    date: 'Aug 25, 9:00 AM',
     status: 'Completed',
   },
 ];
 
-const statuses = ['Active', 'Completed', 'Cancelled'];
-
 const BookingScreen = () => {
   const [selectedStatus, setSelectedStatus] = useState('Active');
+  const navigation = useNavigation();
+
+  const statuses = ['Active', 'Completed', 'Cancelled'];
 
   const filteredBookings = MOCK_BOOKINGS.filter(booking => {
     if (selectedStatus === 'Active') {
@@ -39,17 +41,18 @@ const BookingScreen = () => {
   });
 
   const renderBooking = ({ item }) => (
-  <TouchableOpacity onPress={() => navigation.navigate('BookingDetail', { booking: item })}>
-    <View style={styles.bookingCard}>
+    <TouchableOpacity
+      style={styles.bookingCard}
+      onPress={() => navigation.navigate('BookingDetail', { booking: item })}
+    >
       <Text style={styles.jobTitle}>{item.jobTitle}</Text>
       <Text style={styles.userName}>With: {item.userName}</Text>
-      <Text style={styles.dateTime}>{item.dateTime}</Text>
-      <Text style={[styles.status, item.status === 'Confirmed' && styles.statusConfirmed]}>
+      <Text style={styles.date}>{item.date}</Text>
+      <Text style={[styles.status, item.status === 'Confirmed' ? styles.statusConfirmed : null]}>
         {item.status}
       </Text>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,18 +60,10 @@ const BookingScreen = () => {
         {statuses.map(status => (
           <TouchableOpacity
             key={status}
-            style={[
-              styles.tabButton,
-              selectedStatus === status && styles.tabButtonSelected,
-            ]}
+            style={[styles.tabButton, selectedStatus === status ? styles.tabButtonSelected : null]}
             onPress={() => setSelectedStatus(status)}
           >
-            <Text
-              style={[
-                styles.tabButtonText,
-                selectedStatus === status && styles.tabButtonTextSelected,
-              ]}
-            >
+            <Text style={[styles.tabButtonText, selectedStatus === status ? styles.tabButtonTextSelected : null]}>
               {status}
             </Text>
           </TouchableOpacity>
@@ -79,12 +74,12 @@ const BookingScreen = () => {
         data={filteredBookings}
         keyExtractor={item => item.id}
         renderItem={renderBooking}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        ListEmptyComponent={
+        ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No bookings found.</Text>
           </View>
-        }
+        )}
+        contentContainerStyle={{ paddingBottom: 20 }}
       />
     </SafeAreaView>
   );
